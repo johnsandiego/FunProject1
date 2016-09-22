@@ -18,43 +18,43 @@ void printMEM(int upto);
 
 
 
-int OP0(char *IR);
-int OP1(char *IR);
-int OP2();
-int OP3(char *IR);
-int OP4(char *IR);
-int OP5();
-int OP6(char *IR);
-int OP7();
-int OP8();
-int OP9();
-int OP10();
-int OP11();
-int OP12();
-int OP13();
-int OP14(char *IR);
-int OP15(char *IR);
-int OP16(char *IR);
-int OP17();
-int OP18();
-int OP19();
-int OP20(char *IR);
-int OP21();
-int OP22();
-int OP23();
-int OP24();
-int OP25();
-int OP26(char *IR);
-int OP27();
-int OP28();
-int OP29(char *IR);
-int OP30();
-int OP31();
-int OP32();
-int OP33(char *IR);
-int OP34(char *IR);
-int OP35();
-int HALT();
+void OP0(char *IR);
+void OP1(char *IR);
+void OP2();
+void OP3(char *IR);
+void OP4(char *IR);
+void OP5();
+void OP6(char *IR);
+void OP7();
+void OP8();
+void OP9();
+void OP10();
+void OP11();
+void OP12();
+void OP13();
+void OP14(char *IR);
+void OP15(char *IR);
+void OP16(char *IR);
+void OP17();
+void OP18();
+void OP19();
+void OP20(char *IR);
+void OP21();
+void OP22();
+void OP23();
+void OP24();
+void OP25();
+void OP26(char *IR);
+void OP27();
+void OP28();
+void OP29(char *IR);
+void OP30();
+void OP31();
+void OP32();
+void OP33(char *IR);
+void OP34(char *IR);
+void OP35();
+void HALT();
 
 void printMEM() ;
 /*These variables are associated with the implementation of the VM*/
@@ -177,7 +177,7 @@ main(int argc, char *argv[])
 	int ParseOp1 (char *IR)
 	    {
         int operand;
-        operand = ((IR[2]-48)+(IR[3]-48)*10);
+        operand = ((IR[2]-48)*10+(IR[3]-48)*1);
         return operand;
 
       }
@@ -186,14 +186,16 @@ main(int argc, char *argv[])
 	int ParseOp2 (char *IR)
 	    {
         int operand2;
-        operand2 = ((IR[4]-48)+(IR[5]-48)*10);
+        operand2 = ((IR[4]-48)*10+(IR[5]-48)*1);
         return operand2;
       }
 
 	//returns the integer value of operands 1 and 2 combined to form a 4-byte integer.
 	int ParseOP1andOP2Imm(char *IR)
 	    {
-          return ParseOp1(*IR) + ParseOp2(*IR);
+        int ParseOP1andOP2;
+        ParseOP1andOP2 = ((IR[2]-48)*1000+(IR[3]-48)*100+(IR[2]-48)*10+(IR[3]-48)*1);
+          return ParseOP1andOP2;
 
 
       }
@@ -255,7 +257,7 @@ main(int argc, char *argv[])
 //Now its time for the instruction execution functions.
 // Here is the first.
 
-	OP0(char *IR)
+	void OP0(char *IR)
 	{ int PREG, VAL ;
 	  printf("Opcode = 00. Load Pointer Immediate\n") ;
    	  PrintIR(IR) ;
@@ -275,7 +277,8 @@ main(int argc, char *argv[])
 
 /* Now its your turn! Provide the prototype and implementation for the remaining opcodes.
  */
- OP1(char *IR)
+ //done - need revision and test
+void OP1(char *IR)
  {
    //pn <- pn - xx,x:{0..9}
    int PREG, VAL ;
@@ -293,41 +296,37 @@ main(int argc, char *argv[])
    }
 
  }
- OP2(char *IR)
+ //done - need revision and test
+void OP2(char *IR)
  { int PREG, VAL ;
-   printf("Opcode = 00. Subtract Pointer Immediate\n") ;
+   printf("Opcode = 02. Subtract Pointer Immediate\n") ;
        PrintIR(IR) ;
 
     PREG = ParseOp1Reg(IR) ;
     VAL = 	ParseOp2 (IR) ;
 
  switch(PREG)
-   {case 0: P0 -= VAL ;
-     case 1: P1 -= VAL ;
-     case 2: P2 -= VAL ;
-     case 3: P3 -= VAL ;
+   { case 0: P0 = P0 - VAL ;
+     case 1: P1 = P1 - VAL ;
+     case 2: P2 = P2 - VAL ;
+     case 3: P3 = P3 - VAL ;
    }
 
  }
- OP3(char *IR)
+ //done - need revision and test
+void OP3(char *IR)
  { int  VAL ; // value of operand 1 and 2 combined
-   printf("Opcode = 00. Load Accumulator Immediate\n") ;
+   printf("Opcode = 03. Load Accumulator Immediate\n") ;
        PrintIR(IR) ;
 
 
     VAL = 	ParseOP1andOP2Imm(IR) ;
-
- switch(PREG)
-   {case 0: ACC = VAL ;
-     case 1: ACC = VAL ;
-     case 2: ACC = VAL ;
-     case 3: ACC = VAL ;
-   }
+    ACC = VAL;
 
  }
-  OP4(char *IR){
+void OP4(char *IR){
     int PREG, VAL, ADDR ;
-      printf("Opcode = 04. Load Pointer Immediate\n") ;
+      printf("Opcode = 04. Load Accululator Register Addressing\n") ;
         PrintIR(IR) ;
 
        PREG = ParseOp1Reg(IR) ; // PREG = pointer register
@@ -349,5 +348,31 @@ main(int argc, char *argv[])
       VAL += (memory[ADDR][5]-48)*1;
       ACC = VAL;
     printf("%i\n", ACC);
+
+  }
+  //done - need revision and test
+void  OP5(char *IR){
+    int PREG, VAL, ADDR ;
+      printf("Opcode = 05. Load Accululator Direct Addressing\n") ;
+        PrintIR(IR) ;
+
+       PREG = ParseOp1(IR) ; // PREG = pointer register
+       //PREG = 12 ;
+       //pointer register = operand 1
+       //memory location = pointer register
+       //acc = memory location
+       VAL = (memory[PREG][2]-48)*10;
+       VAL += (memory[PREG][3]-48)*1;
+       ACC = VAL;
+
+  }
+  void OP6(char *IR){
+    int PREG, VAL, ADDR ;
+      printf("Opcode = 06. Store Accumulator Register Addressing\n") ;
+        PrintIR(IR) ;
+
+       PREG = ParseOp1Reg(IR) ; // PREG = pointer register
+       memory[PREG][3] = ACC;
+
 
   }
