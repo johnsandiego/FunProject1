@@ -233,7 +233,7 @@ main(int argc, char *argv[])
 	//Prints out the contents of the IR on the same line.
 	void PrintIR(char *IR)
 	    {
-
+          printf("%s\n", IR);
 
 
       }
@@ -286,10 +286,10 @@ main(int argc, char *argv[])
     VAL = 	ParseOp2 (IR) ;
 
  switch(PREG)
-   {case 0: P0 += VAL ;
-     case 1: P1 += VAL ;
-     case 2: P2 += VAL ;
-     case 3: P3 += VAL ;
+   { case 0: P0 = P0 + VAL ;
+     case 1: P1 = P1 + VAL ;
+     case 2: P2 = P2 + VAL ;
+     case 3: P3 = P3 + VAL ;
    }
 
  }
