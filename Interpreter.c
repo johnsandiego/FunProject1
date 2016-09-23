@@ -20,10 +20,10 @@ void printMEM(int upto);
 
 void OP0(char *IR);
 void OP1(char *IR);
-void OP2();
+void OP2(char *IR);
 void OP3(char *IR);
 void OP4(char *IR);
-void OP5();
+void OP5(char *IR);
 void OP6(char *IR);
 void OP7();
 void OP8();
@@ -56,7 +56,6 @@ void OP34(char *IR);
 void OP35();
 void HALT();
 
-void printMEM() ;
 /*These variables are associated with the implementation of the VM*/
 int fp ;
 int i ;
@@ -163,13 +162,7 @@ main(int argc, char *argv[])
 			 exit(0) ;
 		}
 	      }
-	     }
-
-
- /* Provide implementation of the helper functions. You are free to provide as
-    many additional helper functions as desired.
- */
-
+}
 
 	//This function returns the integer value of operand 1
 	//when this operand is an immediate two-byte integer.
@@ -210,10 +203,6 @@ main(int argc, char *argv[])
 
       }
 
-
-
-
-
 	// returns the register number of a register used as operand  2 of an instruction.
 	// Can be either a Pointer or General-Purpose register.
 	int ParseOp2Reg (char *IR)
@@ -228,29 +217,31 @@ main(int argc, char *argv[])
 	// returns the data stored at memory location Memory_Location
 	int FetchData(int Memory_Location)
 	    {
-          returns memory[Memory_Location][0];
-
-
+        int i , MEM;
+        for(i=0;i<6;i++){
+          MEM = (memory[Memory_Location][i])-48;
+        }
+          return MEM;
       }
-
-
 	//Prints out the contents of the IR on the same line.
 	void PrintIR(char *IR)
 	    {
-          printf("%s\n", IR);
+          printf("%c\n", IR);
 
 
       }
-
 
 	//prints out the contents of memory from row 0 to row upto.
 	//This should print out all instructions and data stored in memory.
 	void printMEM(int upto)
 	   {
-        for(int i = 0; i<100; i++)
+       int i,j;
+        for(i= 0; i<upto; i++)
         {
-          printf("%i\n", memory[i] );
-
+          for(j =0; j<6;j++){
+          printf("%c", memory[i][j] );
+            }
+            printf("\n" );
 
         }
 
@@ -258,28 +249,24 @@ main(int argc, char *argv[])
 
 //Now its time for the instruction execution functions.
 // Here is the first.
-
-	void OP0(char *IR)
-	{ int PREG, VAL ;
+void OP0(char *IR){
+    int PREG, VAL ;
 	  printf("Opcode = 00. Load Pointer Immediate\n") ;
    	  PrintIR(IR) ;
 
   	 PREG = ParseOp1Reg(IR) ;
   	 VAL = 	ParseOp2 (IR) ;
 
-	switch(PREG)
-		{case 0: P0 = VAL ;
-		  case 1: P1 = VAL ;
-		  case 2: P2 = VAL ;
-		  case 3: P3 = VAL ;
-		}
+	    switch(PREG)
+		    {
+          case 0: P0 = VAL ;
+  		    case 1: P1 = VAL ;
+		      case 2: P2 = VAL ;
+		      case 3: P3 = VAL ;
+		    }
 	  //Will print out junk until the two helper functions are implemented!
 	  //printf("Loaded P[%d] with immediate value %d\n", PREG, VAL ) ;
-	}
-
-/* Now its your turn! Provide the prototype and implementation for the remaining opcodes.
- */
- //done - need revision and test
+}
 void OP1(char *IR)
  {
    //pn <- pn - xx,x:{0..9}
@@ -332,10 +319,6 @@ void OP4(char *IR){
         PrintIR(IR) ;
 
        PREG = ParseOp1Reg(IR) ; // PREG = pointer register
-       //PREG = 12 ;
-       //pointer register = operand 1
-       //memory location = pointer register
-       //acc = memory location
 
     switch(PREG)
       {
@@ -353,28 +336,79 @@ void OP4(char *IR){
 
   }
   //done - need revision and test
-void  OP5(char *IR){
+void OP5(char *IR){
     int PREG, VAL, ADDR ;
       printf("Opcode = 05. Load Accululator Direct Addressing\n") ;
         PrintIR(IR) ;
 
        PREG = ParseOp1(IR) ; // PREG = pointer register
-       //PREG = 12 ;
-       //pointer register = operand 1
-       //memory location = pointer register
-       //acc = memory location
+
        VAL = (memory[PREG][2]-48)*10;
        VAL += (memory[PREG][3]-48)*1;
        ACC = VAL;
 
   }
-  void OP6(char *IR){
-    int PREG, VAL, ADDR ;
+void OP6(char *IR){
+    int PREG, VAL, ADDR , i;
       printf("Opcode = 06. Store Accumulator Register Addressing\n") ;
-        PrintIR(IR) ;
+        PrintIR(IR);
 
-       PREG = ParseOp1Reg(IR) ; // PREG = pointer register
-       memory[PREG][3] = ACC;
+        PREG = ParseOp1Reg(IR) ; // PREG = pointer register
+
+        switch(PREG)
+          {
+            case 0: ADDR = P0;
+            case 1: ADDR = P1;
+            case 2: ADDR = P2;
+            case 3: ADDR = P3;
+          }
+
+          memory[ADDR][3] = ACC-48;
+
+  }
+void OP7(char *IR){
+    int PREG, ADDR;
+      printf("Opcode = 07. Store Accumulator Direct Addressing\n") ;
+        PrintIR(IR) ;
+        PREG = IR[2]-48;
+        ADDR = IR[3]-48;
+       memory[PREG][ADDR] = ACC;
 
 
   }
+void OP8(char *IR){
+
+  
+
+
+
+
+}
+void OP9(){}
+void OP10(){}
+void OP11(){}
+void OP12(){}
+void OP13(){}
+void OP14(char *IR){}
+void OP15(char *IR){}
+void OP16(char *IR){}
+void OP17(){}
+void OP18(){}
+void OP19(){}
+void OP20(char *IR){}
+void OP21(){}
+void OP22(){}
+void OP23(){}
+void OP24(){}
+void OP25(){}
+void OP26(char *IR){}
+void OP27(){}
+void OP28(){}
+void OP29(char *IR){}
+void OP30(){}
+void OP31(){}
+void OP32(){}
+void OP33(char *IR){}
+void OP34(char *IR){}
+void OP35(){}
+void HALT(){}
