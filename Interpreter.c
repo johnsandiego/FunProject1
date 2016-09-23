@@ -204,7 +204,9 @@ main(int argc, char *argv[])
 	// Can be either Pointer or General-Purpose register.
 	int ParseOp1Reg (char *IR)
 	    {
-            return ParseOp1();
+          int PREG = IR[3]-48;
+          return PREG;
+
 
       }
 
@@ -218,15 +220,15 @@ main(int argc, char *argv[])
 	    {
 
 
-        return register number;
-
+        int PREG = IR[5]-48;
+        return PREG;
 
       }
 
 	// returns the data stored at memory location Memory_Location
 	int FetchData(int Memory_Location)
 	    {
-
+          returns memory[Memory_Location][0];
 
 
       }
