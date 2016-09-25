@@ -370,45 +370,189 @@ void OP7(char *IR){
     int PREG, ADDR;
       printf("Opcode = 07. Store Accumulator Direct Addressing\n") ;
         PrintIR(IR) ;
-        PREG = IR[2]-48;
         ADDR = IR[3]-48;
-       memory[PREG][ADDR] = ACC;
+        ACC = ADDR;
+       memory[ADDR][2] = ACC;
 
 
   }
 void OP8(char *IR){
+  int PREG, ADDR;
+  printf("Opcode = 08. Store Register to memory: Register Addressing\n") ;
+    PrintIR(IR) ;
+  PREG = ParseOp1Reg(IR);
 
-  
-
-
+  switch (PREG) {
+    case 0: P0 = R0;
+    case 1: P1 = R1;
+    case 2: P2 = R2;
+    case 3: P3 = R3;
+  }
+}
+void OP9(char* IR){
+  printf("Opcode = 09. Store Register to memory: Direct Addressing\n") ;
+    PrintIR(IR) ;
+    int PREG, ADDR;
+    PREG = ParseOp1Reg(IR);
+    ADDR = ParseOp2(IR);
+    switch (PREG) {
+      case 0: memory[ADDR][2] = R0;
+      case 1: memory[ADDR][2] = R1;
+      case 2: memory[ADDR][2] = R2;
+      case 3: memory[ADDR][2] = R3;
+    }
 
 
 }
-void OP9(){}
-void OP10(){}
+void OP10(){
+  printf("Opcode = 09. Store Register to memory: Direct Addressing\n") ;
+    PrintIR(IR) ;
+
+
+}
 void OP11(){}
 void OP12(){}
 void OP13(){}
-void OP14(char *IR){}
-void OP15(char *IR){}
-void OP16(char *IR){}
-void OP17(){}
-void OP18(){}
-void OP19(){}
-void OP20(char *IR){}
-void OP21(){}
-void OP22(){}
-void OP23(){}
-void OP24(){}
-void OP25(){}
-void OP26(char *IR){}
-void OP27(){}
-void OP28(){}
-void OP29(char *IR){}
-void OP30(){}
-void OP31(){}
-void OP32(){}
-void OP33(char *IR){}
-void OP34(char *IR){}
-void OP35(){}
-void HALT(){}
+
+void OP14(char *IR){
+  printf("Opcode = 14. Load Accumulator from Register\n") ;
+    PrintIR(IR) ;
+    int PREG;
+    PREG = ParseOp1(IR);
+    switch (PREG) {
+      case 0: ACC = R0;
+      case 1: ACC = R1;
+      case 2: ACC = R2;
+      case 3: ACC = R3;
+    }
+
+}
+void OP15(char *IR){
+  printf("Opcode = 15. Load Register from Accumulator\n") ;
+    PrintIR(IR) ;
+    int PREG;
+    PREG = ParseOp1(IR);
+    switch (PREG) {
+      case 0: R0 = ACC;
+      case 1: R1 = ACC;
+      case 2: R2 = ACC;
+      case 3: R3 = ACC;
+    }
+
+
+}
+void OP16(char *IR){
+  printf("Opcode = 16. Add Accumulator Immediate\n") ;
+    PrintIR(IR) ;
+    int PREG;
+    PREG = ParseOP1andOP2Imm(IR);
+    ACC = ACC + PREG;
+
+}
+void OP17(char *IR){
+  printf("Opcode = 17. Subtract Accumulator Immediate\n") ;
+    PrintIR(IR) ;
+  int PREG;
+  PREG = ParseOP1andOP2Imm(IR);
+  ACC = ACC - PREG;
+
+}
+void OP18(){
+  printf("Opcode = 18. Add contents of Register to Accumulator\n") ;
+    PrintIR(IR) ;
+  int PREG;
+  PREG = ParseOp1Reg(IR);
+
+  switch (PREG) {
+    case 0: ACC = ACC + R0;
+    case 1: ACC = ACC + R1;
+    case 2: ACC = ACC + R2;
+    case 3: ACC = ACC + R3;
+  }
+}
+void OP19(){
+  printf("Opcode = 19. Subtract contents of Register to Accumulator\n") ;
+    PrintIR(IR) ;
+  int PREG;
+  PREG = ParseOp1Reg(IR);
+
+  switch (PREG) {
+    case 0: ACC = ACC - R0;
+    case 1: ACC = ACC - R1;
+    case 2: ACC = ACC - R2;
+    case 3: ACC = ACC - R3;
+  }
+}
+void OP20(char *IR){
+  printf("Opcode = 20. Add Accumulator Register Addressing\n") ;
+    PrintIR(IR) ;
+    int PREG,VAL;
+    PREG = ParseOp1RegIR);
+
+    VAL = ACC + (memory[PREG][2]-48)*10;
+    VAl += ACC + (memory[PREG][3]-48)*1;
+
+
+    ACC = VAL;
+
+}
+void OP21(){
+  printf("Opcode = 21. Add Accumulator Direct Addressing\n") ;
+    PrintIR(IR) ;
+
+}
+void OP22(){
+  printf("Opcode = 22. Subtract from Accumulator Register Addressing\n") ;
+    PrintIR(IR) ;
+}
+void OP23(){
+  printf("Opcode = 23. Subtract from Accumulator Direct Addressing\n") ;
+    PrintIR(IR) ;
+}
+void OP24(){
+  printf("Opcode = 24. Compare Equal Register Addressing\n") ;
+    PrintIR(IR) ;
+}
+void OP25(){
+  printf("Opcode = 25. Compare Less Register Addressing\n") ;
+    PrintIR(IR) ;
+}
+void OP26(char *IR){
+  printf("Opcode = 26. Compare Greater Register Addressing\n") ;
+    PrintIR(IR) ;
+}
+void OP27(){
+  printf("Opcode = 27. Compare Greater Immediate\n") ;
+    PrintIR(IR) ;
+}
+void OP28(){
+  printf("Opcode = 28. Compare Equal Immediate\n") ;
+  PrintIR(IR) ;}
+void OP29(char *IR){
+  printf("Opcode = 29. Compare Less Immediate\n") ;
+    PrintIR(IR) ;
+}
+void OP30(){
+  printf("Opcode = 30. Compare Register Equal\n") ;
+    PrintIR(IR) ;
+}
+void OP31(){
+  printf("Opcode = 31. Compare Register Less\n") ;
+    PrintIR(IR) ;
+}
+void OP32(){
+  printf("Opcode = 32. Compare Register Greater\n") ;
+    PrintIR(IR) ;
+}
+void OP33(char *IR){
+  printf("Opcode = 33. Branch Conditional True\n") ;
+    PrintIR(IR) ;
+}
+void OP34(char *IR){
+  printf("Opcode = 34. Branch Conditional False\n") ;
+    PrintIR(IR) ;
+}
+void OP35(){
+  printf("Opcode = 35. Branch Unconditional\n") ;
+    PrintIR(IR) ;
+}
