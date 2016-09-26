@@ -15,7 +15,6 @@ int ParseOp2Reg (char *IR);
 int FetchData(int Memory_Location);
 void PrintIR(char *IR);
 void printMEM(int upto);
-char ParseIntToChar(int ACC);
 
 
 void OP0(char *IR);
@@ -82,7 +81,7 @@ char memory [100][6]  ; //this is the program memory for first program
 short int opcode ;            //nice to know what we are doing
 int program_line = 0 ;
 
-main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
 
  //Step 1 Read file into VM memory. Assume the file name is program2.
@@ -153,7 +152,7 @@ main(int argc, char *argv[])
 		case 16: OP16(IR) ; PC++; break ;
 		case 20: OP20(IR) ; PC++; break ;
 		case 26: OP26(IR, PSW) ; PC++ ; break;
-		case 29: OP29(IR,PSW); PC++ ; break ;
+		case 29: OP29(IR, PSW); PC++ ; break ;
 		case 33: OP33(IR, PSW, &PC) ; break ;
 		case 34: OP34(IR, PSW, &PC) ; break ;
 		case 99: printf("ALL DONE\n") ; Done = 1 ;
@@ -174,17 +173,7 @@ main(int argc, char *argv[])
 
       }
 
-  char ParseIntToChar(int ACC){
-      char Accumulator[4];
-      Accumulator[0] = ((int)(ACC%10000)/1000)+48;
-      Accumulator[1] = ((int)(ACC%1000)/100)+48;
-      Accumulator[2] = ((int)(ACC%100)/10)+48;
-      Accumulator[3] = ((int)(ACC%10)/1)+48;
 
-      return Accumulator;
-
-
-  }
 
 	// returns the integer value of operand 2 when this operand is a two-byte integer.
 	int ParseOp2 (char *IR)
@@ -378,60 +367,110 @@ void OP6(char *IR){
           AC[1] = (char)((int)(ACC%1000)/100)+48;
           AC[2] = (char)((int)(ACC%100)/10)+48;
           AC[3] = (char)((int)(ACC%10)/1)+48;
+
           memory[ADDR][2] = AC[0];
           memory[ADDR][3] = AC[1];
           memory[ADDR][4] = AC[2];
           memory[ADDR][5] = AC[3];
   }
 void OP7(char *IR){
-    int PREG, ADDR;
+    int  ADDR;
+    char AC[4];
       printf("Opcode = 07. Store Accumulator Direct Addressing\n") ;
         PrintIR(IR) ;
-        ADDR = IR[3]-48;
-        ACC = ADDR;
-       memory[ADDR][2] = ACC;
+        ADDR = ParseOp1(IR);
+
+        AC[0] = (char)((int)(ACC%10000)/1000)+48;
+        AC[1] = (char)((int)(ACC%1000)/100)+48;
+        AC[2] = (char)((int)(ACC%100)/10)+48;
+        AC[3] = (char)((int)(ACC%10)/1)+48;
+
+        memory[ADDR][2] = AC[0];
+        memory[ADDR][3] = AC[1];
+        memory[ADDR][4] = AC[2];
+        memory[ADDR][5] = AC[3];
 
 
   }
 void OP8(char *IR){
-  int PREG, ADDR;
+  int PREG, ADDR, VAL_R, VAL_P;
+  char AC[4];
   printf("Opcode = 08. Store Register to memory: Register Addressing\n") ;
   PrintIR(IR) ;
   PREG = ParseOp1Reg(IR);
+  ADDR = ParseOp2Reg(IR);
 
   switch (PREG) {
-    case 0: P0 = R0;
-    case 1: P1 = R1;
-    case 2: P2 = R2;
-    case 3: P3 = R3;
+    case 0: VAL_R = R0;
+    case 1: VAL_R = R1;
+    case 2: VAL_R = R2;
+    case 3: VAL_R = R3;
   }
+
+  switch (ADDR) {
+    case 0: VAL_P = P0;
+    case 1: VAL_P = P1;
+    case 2: VAL_P = P2;
+    case 3: VAL_P = P3;
+  }
+
+  AC[0] = (char)((int)(VAL_R%10000)/1000)+48;
+  AC[1] = (char)((int)(VAL_R%1000)/100)+48;
+  AC[2] = (char)((int)(VAL_R%100)/10)+48;
+  AC[3] = (char)((int)(VAL_R%10)/1)+48;
+
+  memory[VAL_P][2] = AC[0];
+  memory[VAL_P][3] = AC[1];
+  memory[VAL_P][4] = AC[2];
+  memory[VAL_P][5] = AC[3];
+
+
 }
 void OP9(char* IR){
   printf("Opcode = 09. Store Register to memory: Direct Addressing\n") ;
     PrintIR(IR) ;
-    int PREG, ADDR;
+    int PREG, ADDR, VAL_R;
+    char AC[4];
     PREG = ParseOp1Reg(IR);
     ADDR = ParseOp2(IR);
+
     switch (PREG) {
-      case 0: memory[ADDR][2] = R0;
-      case 1: memory[ADDR][2] = R1;
-      case 2: memory[ADDR][2] = R2;
-      case 3: memory[ADDR][2] = R3;
-    }
+      case 0: VAL_R = R0;
+      case 1: VAL_R = R1;
+      case 2: VAL_R = R2;
+      case 3: VAL_R = R3;
+      }
+
+      AC[0] = (char)((int)(VAL_R%10000)/1000)+48;
+      AC[1] = (char)((int)(VAL_R%1000)/100)+48;
+      AC[2] = (char)((int)(VAL_R%100)/10)+48;
+      AC[3] = (char)((int)(VAL_R%10)/1)+48;
+
+      memory[ADDR][2] = AC[0];
+      memory[ADDR][3] = AC[1];
+      memory[ADDR][4] = AC[2];
+      memory[ADDR][5] = AC[3];
 
 
 }
 void OP10(char *IR){
   printf("Opcode = 10. Load Register from memory: Register Addressing\n") ;
     PrintIR(IR) ;
-    int PREG, ADDR, VAL;
+    int PREG, ADDR, VAL, VAL2;
     PREG = ParseOp1Reg(IR);
     ADDR = ParseOp2Reg(IR);
 
-    VAL = (memory[ADDR][2]-48)*1000;
-    VAL += (memory[ADDR][3]-48)*100;
-    VAL += (memory[ADDR][4]-48)*10;
-    VAL += (memory[ADDR][5]-48)*1;
+    switch (ADDR) {
+      case 0: VAL2 = P0;
+      case 1: VAL2 = P1;
+      case 2: VAL2 = P2;
+      case 3: VAL2 = P3;
+
+    }
+    VAL = (memory[VAL2][2]-48)*1000;
+    VAL += (memory[VAL2][3]-48)*100;
+    VAL += (memory[VAL2][4]-48)*10;
+    VAL += (memory[VAL2][5]-48)*1;
 
     switch (PREG) {
       case 0: R0 = VAL;
@@ -753,7 +792,7 @@ void OP32(char *IR){
     else
       PSW[0] = false;
 }
-void OP33(char *IR){
+void OP33(char *IR, char *PSW, int &PC){
   printf("Opcode = 33. Branch Conditional True\n") ;
     PrintIR(IR) ;
     int PREG;
@@ -762,7 +801,7 @@ void OP33(char *IR){
     if(PSW[0] == true)
       PC = PREG;
 }
-void OP34(char *IR){
+void OP34(char *IR, char *PSW, int &PC){
   printf("Opcode = 34. Branch Conditional False\n") ;
     PrintIR(IR) ;
     int PREG;
