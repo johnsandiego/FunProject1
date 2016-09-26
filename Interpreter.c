@@ -44,15 +44,15 @@ void OP22(char *IR);
 void OP23(char *IR);
 void OP24(char *IR);
 void OP25(char *IR);
-void OP26(char *IR);
+void OP26(char *IR, char *PSW);
 void OP27(char *IR);
 void OP28(char *IR);
-void OP29(char *IR);
+void OP29(char *IR, char *PSW);
 void OP30(char *IR);
 void OP31(char *IR);
 void OP32(char *IR);
-void OP33(char *IR);
-void OP34(char *IR);
+void OP33(char *IR, char *PSW);
+void OP34(char *IR, char *PSW);
 void OP35(char *IR);
 
 /*These variables are associated with the implementation of the VM*/
@@ -157,7 +157,7 @@ main(int argc, char *argv[])
 		case 33: OP33(IR, PSW, &PC) ; break ;
 		case 34: OP34(IR, PSW, &PC) ; break ;
 		case 99: printf("ALL DONE\n") ; Done = 1 ;
-		default: printf("Instruction %d not found!!~\n", opcode) ;
+		default: printf("Instruction %d not found!!~\n", opcode);
 			 exit(0) ;
 		}
 	      }
@@ -176,10 +176,10 @@ main(int argc, char *argv[])
 
   char ParseIntToChar(int ACC){
       char Accumulator[4];
-      Accumulator[0] = (ACC-48)/1;
-      Accumulator[1] = (ACC-48)/10;
-      Accumulator[2] = (ACC-48)/100;
-      Accumulator[3] = (ACC-48)/1000;
+      Accumulator[0] = ((int)(ACC%10000)/1000)+48;
+      Accumulator[1] = ((int)(ACC%1000)/100)+48;
+      Accumulator[2] = ((int)(ACC%100)/10)+48;
+      Accumulator[3] = ((int)(ACC%10)/1)+48;
 
       return Accumulator;
 
@@ -320,7 +320,7 @@ void OP3(char *IR)
        PrintIR(IR) ;
 
 
-    VAL = 	ParseOP1andOP2Imm(IR) ;
+    VAL = ParseOP1andOP2Imm(IR) ;
     ACC = VAL;
 
  }
@@ -360,12 +360,13 @@ void OP5(char *IR){
 
   }
 void OP6(char *IR){
-    int PREG, VAL, ADDR , i;
+    int PREG, VAL, ADDR;
+    char AC[4];
       printf("Opcode = 06. Store Accumulator Register Addressing\n") ;
         PrintIR(IR);
 
         PREG = ParseOp1Reg(IR) ; // PREG = pointer register
-
+        AC = ParseIntToChar(ACC);
         switch(PREG)
           {
             case 0: ADDR = P0;
@@ -373,9 +374,14 @@ void OP6(char *IR){
             case 2: ADDR = P2;
             case 3: ADDR = P3;
           }
-
-          memory[ADDR][3] = ACC-48;
-
+          AC[0] = (char)((int)(ACC%10000)/1000)+48;
+          AC[1] = (char)((int)(ACC%1000)/100)+48;
+          AC[2] = (char)((int)(ACC%100)/10)+48;
+          AC[3] = (char)((int)(ACC%10)/1)+48;
+          memory[ADDR][2] = AC[0];
+          memory[ADDR][3] = AC[1];
+          memory[ADDR][4] = AC[2];
+          memory[ADDR][5] = AC[3];
   }
 void OP7(char *IR){
     int PREG, ADDR;
@@ -390,7 +396,7 @@ void OP7(char *IR){
 void OP8(char *IR){
   int PREG, ADDR;
   printf("Opcode = 08. Store Register to memory: Register Addressing\n") ;
-    PrintIR(IR) ;
+  PrintIR(IR) ;
   PREG = ParseOp1Reg(IR);
 
   switch (PREG) {
@@ -421,9 +427,7 @@ void OP10(char *IR){
     int PREG, ADDR, VAL;
     PREG = ParseOp1Reg(IR);
     ADDR = ParseOp2Reg(IR);
-    //op1 = rn
-    //op2 = xx
-    //Rn = memory[op2][2]-48)*1000;
+
     VAL = (memory[ADDR][2]-48)*1000;
     VAL += (memory[ADDR][3]-48)*100;
     VAL += (memory[ADDR][4]-48)*10;
@@ -443,9 +447,7 @@ void OP11(char *IR){
     int PREG, VAl, ADDR;
     PREG = ParseOp1Reg(IR);
     ADDR = ParseOp2(IR);
-    //op1 = rn
-    //op2 = xx
-    //Rn = memory[op2][2]-48)*1000;
+
     VAL = (memory[ADDR][2]-48)*1000;
     VAL += (memory[ADDR][3]-48)*100;
     VAL += (memory[ADDR][4]-48)*10;
@@ -558,7 +560,6 @@ void OP20(char *IR){
 
     VAL = ACC + (memory[PREG][2]-48)*10;
     VAl += ACC + (memory[PREG][3]-48)*1;
-
 
     ACC = VAL;
 
