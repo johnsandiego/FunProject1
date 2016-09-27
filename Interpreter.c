@@ -66,7 +66,7 @@ void OP32(char *IR, char *PSW);
 void OP33(char *IR, char *PSW, short int *PC);
 void OP34(char *IR, char *PSW, short int *PC);
 void OP35(char *IR, short int *PC);
-
+void OP99();
 /*These variables are associated with the implementation of the VM*/
 int fp ;
 int i ;
@@ -151,7 +151,7 @@ int main(int argc, char *argv[])
 
 		 opcode = ((int) (IR[0])- 48) * 10 ;
 		 opcode += ((int) (IR[1])- 48) ;
-	         printf("\n In Program Execution Loop: New PC is %d OPCODE IS %d\n\n", PC, opcode) ;
+	   printf("\n In Program Execution Loop: New PC is %d OPCODE IS %d\n\n", PC, opcode) ;
 
 		/* You need to put in the case statements for the remaining opcodes */
 		switch(opcode) {
@@ -191,7 +191,7 @@ int main(int argc, char *argv[])
 		case 33: OP33(IR, PSW, &PC) ; break ;
 		case 34: OP34(IR, PSW, &PC) ; break ;
     case 35: OP35(IR, &PC) ; break ;
-		case 99: printf("ALL DONE\n") ; Done = 1 ;
+		case 99: printf("ALL DONE\n") ; Done = 1 ; break;
 		default: printf("Instruction %d not found!!~\n", opcode);
 			 exit(0) ;
 		}
@@ -204,7 +204,8 @@ int main(int argc, char *argv[])
 	int ParseOp1 (char *IR)
 	    {
         int operand;
-        operand = ((IR[2]-48)*10+(IR[3]-48)*1);
+        operand = ((int) (IR[2])- 48) * 10 ;
+   		  operand += ((int) (IR[3])- 48) ;
         return operand;
 
       }
@@ -215,7 +216,8 @@ int main(int argc, char *argv[])
 	int ParseOp2 (char *IR)
 	    {
         int operand2;
-        operand2 = ((IR[4]-48)*10+(IR[5]-48)*1);
+        operand2 = ((int) (IR[4])- 48) * 10 ;
+        operand2 += ((int) (IR[5])- 48) ;
         return operand2;
       }
 
@@ -223,8 +225,11 @@ int main(int argc, char *argv[])
 	int ParseOP1andOP2Imm(char *IR)
 	    {
         int ParseOP1andOP2;
-        ParseOP1andOP2 = ((IR[2]-48)*1000+(IR[3]-48)*100+(IR[2]-48)*10+(IR[3]-48)*1);
-          return ParseOP1andOP2;
+        ParseOP1andOP2 = ((int) (IR[2])- 48) *1000 ;
+        ParseOP1andOP2 += ((int) (IR[3])- 48)*100;
+        ParseOP1andOP2 += ((int) (IR[4])- 48) *10 ;
+        ParseOP1andOP2 += ((int) (IR[5])- 48)*1 ;
+        return ParseOP1andOP2;
 
 
       }
