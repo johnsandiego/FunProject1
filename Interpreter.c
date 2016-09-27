@@ -1,3 +1,14 @@
+/*
+Author: John San Diego
+COS 331 operating system
+Project 1 - PBrain12 Interpreter
+Version 1.00 - 09/26/2016
+
+Brief: Interprets all PBrain12 functions
+
+
+*/
+
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
