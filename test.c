@@ -1,46 +1,63 @@
 #include <stdio.h>
-int ParseOp1(char *IR);
-void OP6(char *IR);
-int ParseOp1Reg(char *IR);
-int ParseOP1andOP2Imm(char *IR);
 
-char IR[6];
-int operand;
-int main(){
+void PrintQ(struct PCB *Current);
+struct PCB *GetNextProcess(struct PCB **Head);
+void MyToTail(struct PCB *Current, struct PCB **RQT);
+void DeletePCB(struct PCB *Current);
 
-  IR[0] = '0';
-  IR[1] = '4';
-  IR[2] = '0';
-  IR[3] = '0';
-  IR[4] = '0';
-  IR[5] = '9';
-
-  //ParseOp1(IR);
-
-
-  printf("%i\n", ParseOP1andOP2Imm(IR));
+struct PCB{
+  struct PCB *NEXT_PCB;
+  int PID;
+  int IC;
 
 }
 
-int ParseOp1 (char *IR)
-    {
 
-      operand = ((IR[2]-48)*10+(IR[3]-48)*1);
-      return operand;
+int main() {
+  struct PCB *RQ, *RQT, *Current;
+  int i;
+  for(i = 0; i<10; i++){
+    Current -> NEXT_PCB = (struct PCB *)malloc(sizeof(struct PCB));
+    Current -> NEXT_PCB -> NEXT_PCB = NULL;
+    Current -> NEXT_PCB -> PID = i;
+    Current -> Current -> NEXT_PCB;
 
+  }
+  Current = RQ;
+
+  PrintQ(RQ);
+  while (1) {
+    Current = GetNextProcess(&RQ);
+    Current -> IC--;
+    if(Current -> IC ==0){
+      DeletePCB(Current);
+    }
+    else{
+      MyToTail(Current, &RQT);
     }
 
-int ParseOp1Reg(char *IR){
+    printf("NEW LIST OF READY PROCESSES\n", );
+    PrintQ(RQ);
+    sleep(1);
 
-
-
+    if(RQ == NULL)
+    break;
+  }
+  return 0;
 }
 
-int ParseOP1andOP2Imm(char *IR)
-    {
-      int ParseOP1andOP2;
-      ParseOP1andOP2 = ((IR[2]-48)*1000+(IR[3]-48)*100+(IR[4]-48)*10+(IR[5]-48)*1);
-        return ParseOP1andOP2;
+void PrintQ(struct PCB *Current) {
 
+}
+struct PCB *GetNextProcess(struct PCB **Head){
+  *Head->NEXT_PCB = (struct PCB *)malloc(sizeof(struct PCB));
 
-    }
+}
+void MyToTail(struct PCB *Current, struct PCB **RQT){
+
+}
+void DeletePCB(struct PCB *Current){
+  struct PCB *temp = Current;
+
+  free(temp);
+}
