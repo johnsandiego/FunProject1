@@ -1,74 +1,115 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-
+#include <time.h>
 struct PCB{
   struct PCB *NEXT_PCB;
   int PID;
   int IC;
-
 };
-struct PCB *PrintQ(struct PCB *Current);
+void PrintQ(struct PCB *Current);
 struct PCB *GetNextProcess(struct PCB **Head);
-void MyToTail(struct PCB *Current, struct PCB **RQT);
+void MoveToTail(struct PCB *Current, struct PCB **RQT);
 void DeletePCB(struct PCB *Current);
 
 
 
 
 int main() {
-  struct PCB *RQ, *RQT, *Current;
+  // RQ is the head , RQT is the TAIL, Current is a current running process
+  struct PCB *RQ, *RQT, *Current, *temp;
   int i;
-  for(i = 0; i<10; i++){
-    Current -> NEXT_PCB = (struct PCB *)malloc(sizeof(struct PCB));
-    Current -> NEXT_PCB -> NEXT_PCB = NULL;
-    Current -> NEXT_PCB -> PID = i;
-    Current -> NEXT_PCB -> IC = Current->NEXT_PCB->PID + 2;
-    Current = Current -> NEXT_PCB;
+  RQ = NULL;
+  RQ = (struct PCB*)malloc(sizeof(struct PCB));
+  RQ->PID = 0;
+  RQ->IC = 2;
+  Current = RQ;
+  for(i = 1; i<10; i++){
+    temp = (struct PCB *)malloc(sizeof(struct PCB));
+    temp-> NEXT_PCB = NULL;
+    temp-> PID = i;
+    temp-> IC = i + 2;
 
+    // if(i==9){
+    //   RQ = Current;
+    // }
+    //printf("%d\n", Current->PID );
+
+    Current -> NEXT_PCB = temp;
+    Current = Current -> NEXT_PCB;
+    printf("in the loop: %d\n",temp->IC);
+    RQT = Current;
   }
 
-
   PrintQ(RQ);
-  while (1) {
+  while (RQ != NULL) {
     Current = GetNextProcess(&RQ);
     Current -> IC--;
+    if(Current->NEXT_PCB != NULL){
+
+      printf("Current PID:%d\n", Current->PID);
+    }
+    printf("IC :%d\n", Current->IC);
     if(Current -> IC ==0){
       DeletePCB(Current);
+      printf("\n" );
     }
     else{
-      MyToTail(Current, &RQT);
+        MoveToTail(Current, &RQT);
+        if(RQ == NULL){
+          RQ = Current;
+          }
+
+
     }
 
     printf("NEW LIST OF READY PROCESSES\n" );
     PrintQ(RQ);
-    sleep(1);
-
+    usleep(100000);
     if(RQ == NULL)
     break;
   }
   return 0;
 }
 
-struct PCB *PrintQ(struct PCB *Current) {
-  struct PCB *temp = Current;
-  while (temp != NULL) {
-    printf("%d\n",temp->PID);
+void PrintQ(struct PCB *Current) {
+  struct PCB *temp = (struct PCB *)malloc(sizeof(struct PCB));
+  temp = Current;
+  int limit = 15;
+   while (temp != NULL && limit>0) {
+     limit--;
+    printf("PQ tmp PID:%d\n",temp->PID);
     temp = temp -> NEXT_PCB;
-  }
+   }
+   if(limit==0){
+     usleep(10000000);
+   }
+
 }
+//removes pcb at head of the list and returns a pointer to it
 struct PCB *GetNextProcess(struct PCB **Head){
   struct PCB *temp = *Head;
-  temp = temp->NEXT_PCB;
+  (*Head) = (*Head) -> NEXT_PCB;
+  temp -> NEXT_PCB = NULL;
+
   return temp;
+
+  // struct PCB *temp = (struct PCB *)malloc(sizeof(struct PCB));
+  // temp = *Head;
+  // temp = temp->NEXT_PCB;
+  // printf("Head was: %d, Now: %d\n",temp->PID, (*Head)->PID );
+  // return temp;
 }
-void MyToTail(struct PCB *Current, struct PCB **RQT){
-  
-  Current = *RQT;
+
+void MoveToTail(struct PCB *Current, struct PCB **RQT){
+if((*RQT) != Current){
+  (*RQT)->NEXT_PCB = Current; //RQT next pcb points to the current running process
+  (*RQT) = Current;}  // RQT points to the Current
+
+//  (*RQT) -> NEXT_PCB = NULL; //stops the loop
+
 
 }
 void DeletePCB(struct PCB *Current){
-  struct PCB *temp = Current;
-
-  free(temp);
+  free(Current);
 }
