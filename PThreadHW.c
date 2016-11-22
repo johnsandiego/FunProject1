@@ -28,6 +28,10 @@ int main()
     printf("procuder ID = 0 created!\n") ;
     pthread_create(&TID[1], NULL, consumer, (void *) &ID[1]) ;
     printf("Comsumer ID = 1 created!\n") ;
+    // pthread_create(&TID[2], NULL, producer, (void *) &ID[2]) ;
+    // printf("procuder ID = 0 created!\n") ;
+     pthread_create(&TID[2], NULL, consumer, (void *) &ID[2]) ;
+     printf("Comsumer ID = 1 created!\n") ;
     for(i = 0; i < 10 ; i++)
      pthread_join(TID[i], NULL) ;
 }
@@ -41,7 +45,8 @@ void *producer(void *Boo)
     {
       nextProduced++ ; //Producing Integers
       /* Check to see if Overwriting unread slot */
-      sem_wait(&mutex) ;
+      sem_wait(&empty) ;
+      //sem_wait(&mutex) ;
       if (buffer[in] != -1)
       {
         printf("Synchronization Error:  Producer %d Just overwrote %d from Slot %d\n", ID, buffer[in], in) ;
@@ -51,7 +56,9 @@ void *producer(void *Boo)
       buffer[in] = nextProduced ;
       printf("Producer %d. Put %d in slot %d\n", ID, nextProduced, in) ;
       in = (in + 1) % BUFFER_SIZE;
+      //sem_post(&mutex) ;
       sem_post(&full) ;
+
     }
   }
 void *consumer (void *Boo)
@@ -63,7 +70,9 @@ void *consumer (void *Boo)
    ID = *ptr ;
    while (1)
    {
-     sem_wait(&mutex) ;
+     sem_wait(&full) ;
+     //sem_wait(&mutex) ;
+
      nextConsumed =  buffer[out];
      /*Check to make sure we did not read from an empty slot*/
      if (nextConsumed == -1)
@@ -76,6 +85,8 @@ void *consumer (void *Boo)
      ID, nextConsumed, out) ;
      buffer[out] = -1 ;
      out = (out + 1) % BUFFER_SIZE;
-     sem_post(&full) ;
+     //sem_post(&mutex) ;
+     sem_post(&empty) ;
+
   }
  }
