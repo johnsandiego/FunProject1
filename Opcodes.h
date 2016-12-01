@@ -55,6 +55,8 @@ void OP32(char *IR, char *PSW);
 void OP33(char *IR, char *PSW, short int *PC);
 void OP34(char *IR, char *PSW, short int *PC);
 void OP35(char *IR, short int *PC);
+void OP36(char *IR);
+void OP37(int a, int b);
 
 int ParseOp1 (char *IR)
 	    {
@@ -902,6 +904,24 @@ void OP35(char *IR, short int *PC){
       *PC = PREG;
 
       printf("ACC = %i\n", ACC);
+}
+
+//opcode 36
+void OP36(char *IR){
+  printf("Opcode = 36. Branch Unconditional\n") ;
+    PrintIR(IR);
+    int PREG;
+    PREG = ParseOp1Reg(IR);
+    switch (PREG) {
+      case 0: wait();break;
+      case 1: signal();break;
+      case 2: getPID();break;
+    }
+}
+
+void OP37(int a, int b){
+  printf("Opcode = 37. Branch Unconditional\n") ;
+    PrintIR(IR);
 
 
 }

@@ -20,6 +20,11 @@ struct PCB
 
         } ;
 
+struct semaphore
+{
+  int count = 1;
+  struct PCB *Sem_Queue;
+};
 
 /*These are variables representing the VM itself*/
 
