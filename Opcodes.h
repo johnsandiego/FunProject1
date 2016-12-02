@@ -56,7 +56,7 @@ void OP33(char *IR, char *PSW, short int *PC);
 void OP34(char *IR, char *PSW, short int *PC);
 void OP35(char *IR, short int *PC);
 void OP36(char *IR);
-void OP37(int a, int b);
+void OP37(char *IR,int a, int b);
 
 int ParseOp1 (char *IR)
 	    {
@@ -908,20 +908,37 @@ void OP35(char *IR, short int *PC){
 
 //opcode 36
 void OP36(char *IR){
-  printf("Opcode = 36. Branch Unconditional\n") ;
+  printf("Opcode = 36. Trap Instruction\n") ;
     PrintIR(IR);
-    int PREG;
+    int PREG,VAL;
     PREG = ParseOp1Reg(IR);
+		VAL = ParseOp2Reg(IR);
     switch (PREG) {
-      case 0: wait();break;
-      case 1: signal();break;
-      case 2: getPID();break;
+      case 0: R0 = PREG;break;
+      case 1: R1 = PREG;break;
+      case 2: R2 = PREG;break;
+
     }
+		switch (VAL) {
+			case 0: //Forks
+				ACC = //forks[i]
+				P0 = PID;
+				break;
+			case 1: //doorman semaphore
+				P1 = PID;
+				break;
+		}
+
+
 }
 
-void OP37(int a, int b){
-  printf("Opcode = 37. Branch Unconditional\n") ;
+void OP37(char *IR, int a, int b){
+  printf("Opcode = 37. Modulo Instruction\n") ;
     PrintIR(IR);
+		int VAL;
+		a = ParseOp1Reg(IR);
+		b = ParseOp2Reg(IR);
+		VAL = a%b;
 
-
+		ACC = VAL;
 }
