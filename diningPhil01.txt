@@ -1,0 +1,25 @@
+12 00 02     01) R0 = 2
+36 R0 R3     02) get PID => R3 = i
+14 R3 xx     03) ACC = R3
+16 00 01     04) ACC + 1
+15 R2 xx     05) R2 = ACC
+12 00 05     06) R0 = 5
+37 R2 R0     07) mod (R2)(R0) => R2 % R0
+15 R2 xx     08) R2 = ACC => i + 1
+
+12 00 00     09) R0 = 0   // for 0 const
+14 R0 xx     10) ACC = R0
+16 00 01     11) ACC + 1   // for 1 const
+15 R1 xx     12) R1 = ACC
+
+	     Loop:
+
+14 R3 xx     13) ACC = R3
+36 R0 R0     14) trap(R0:0)(R0:0)  <- uses ACC to wait on forks[i]
+14 R2 xx     15) ACC = R2
+36 R0 R0     16) trap(R0:0)(R0:0)  <- uses ACC to wait on forks[i+1]
+17 00 01     17) ACC - 1
+36 R1 R0     18) trap(R1:1)(R0:0) <- uses ACC to signal on forks[i]
+16 00 01     19) ACC + 1
+36 R1 R0     20) trap(R1:1)(R0:0) <- uses ACC to signal on forks[i+1]
+35 13 00     21) GOTO: Loop
